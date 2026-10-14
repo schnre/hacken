@@ -100,7 +100,13 @@ export class Hacken {
     if (!this.trick.length) return h.slice();
     const lead = this.trick[0].c.s;
     const follow = h.filter((c) => c.s === lead);
-    if (follow.length) return follow;
+    if (follow.length) {
+      // Wird Trumpf ausgespielt, muss man höher trumpfen, wenn man kann – sonst einen tieferen Trumpf legen.
+      if (lead !== this.trump) return follow;
+      const top = Math.max(...this.trick.filter((t) => t.c.s === this.trump).map((t) => t.c.r));
+      const higher = follow.filter((c) => c.r > top);
+      return higher.length ? higher : follow;
+    }
     // Farbe nicht vorhanden: Trumpf legen; liegt schon Trumpf, muss er höher sein, wenn möglich –
     // sonst darf man untertrumpfen. Nur wer gar keinen Trumpf hat, darf frei legen.
     const trumps = h.filter((c) => c.s === this.trump);
