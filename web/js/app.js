@@ -115,18 +115,18 @@ function render() {
   lastTrickKey = trickKey; lastTrickLen = v.trick.length;
 
   const trumpBox = v.trump == null ? '' : `<div class="trump">${symImg(v.trump)}<div><small>Trumpf</small><b>${SUITS[v.trump]}</b></div></div>`;
-  const openCard = v.open ? `<figure class="open ${animOpen ? 'anim' : ''}">${cardImg(v.open, 'md')}<figcaption>${['exchange', 'play', 'end'].includes(v.phase) ? 'Trumpfkarte' : 'Aufgedeckt'}</figcaption></figure>` : '';
-  const trick = v.trick.map((t, k) => `<figure class="played-card ${t === best ? 'best' : ''} ${k >= animFrom ? 'anim' : ''}">${cardImg(t.c, 'md')}<figcaption>${esc(v.players[t.p].name)}</figcaption></figure>`).join('');
+  const openCard = v.open ? `<figure class="open ${animOpen ? 'anim' : ''}" title="${cardName(v.open)}">${cardImg(v.open, 'side')}<figcaption>${['exchange', 'play', 'end'].includes(v.phase) ? 'Trumpfkarte' : 'Aufgedeckt'}</figcaption></figure>` : '';
+  const trick = v.trick.map((t, k) => `<figure class="played-card ${t === best ? 'best' : ''} ${k >= animFrom ? 'anim' : ''}">${cardImg(t.c, 'trk')}<figcaption>${esc(v.players[t.p].name)}</figcaption></figure>`).join('');
   $('center').innerHTML = `
     <div class="info">
-      <div class="info-left">${trumpBox}${v.obli ? '<span class="obli" title="Erste Runde oder Pot und Nebenpot leer: alle spielen mit">Obli-Runde</span>' : ''}</div>
+      <div class="info-left">${trumpBox}${openCard}${v.obli ? '<span class="obli" title="Erste Runde oder Pot und Nebenpot leer: alle spielen mit">Obli-Runde</span>' : ''}</div>
       <div class="pots">
         <div class="pot"><small>Pot</small><b>${fmt(v.pot)}</b><span class="cap">max ${v.potMax}</span></div>
         <div class="pot side"><small>Nebenpot</small><b>${fmt(v.side)}</b></div>
         <div class="pot stack"><small>Stapel</small><b>${v.deckCount}</b></div>
       </div>
     </div>
-    <div class="felt-mid">${openCard}<div class="trick">${trick}</div></div>`;
+    <div class="felt-mid"><div class="trick">${trick}</div></div>`;
 
   // Ich
   $('me').innerHTML = `<span class="avatar me-av">${esc(me.name[0])}</span>

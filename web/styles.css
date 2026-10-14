@@ -28,6 +28,8 @@
   --card-r: 7px;
   --cw-lg: clamp(66px, 19vw, 108px);
   --cw-md: clamp(50px, 12.5vw, 92px);
+  --cw-trk: clamp(66px, 19vw, 128px);  /* gespielte Karten in der Mitte */
+  --cw-side: clamp(34px, 9vw, 56px);   /* aufgedeckte Trumpfkarte am Rand */
   --cw-xs: clamp(15px, 3.6vw, 26px);
   --ease: cubic-bezier(.2, .8, .2, 1);
   color-scheme: dark;
@@ -193,6 +195,8 @@ button { cursor: pointer; }
 }
 .card.xs { width: var(--cw-xs); border-radius: 3px; box-shadow: 0 1px 2px rgb(0 0 0 / .35); }
 .card.md { width: var(--cw-md); }
+.card.trk { width: var(--cw-trk); }
+.card.side { width: var(--cw-side); border-radius: 5px; }
 .card.lg { width: var(--cw-lg); }
 .card.back {
   background:
@@ -227,8 +231,9 @@ button { cursor: pointer; }
 .pot .cap { font-size: 10px; color: var(--on-felt-2); }
 .pot.side b, .pot.stack b { color: var(--on-felt); font-size: 18px; }
 
-.felt-mid { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 4vw, 40px); min-height: calc(var(--cw-md) * 1.5 + 30px); }
-.open { display: grid; justify-items: center; gap: 4px; transform: rotate(-4deg); }
+.felt-mid { display: flex; align-items: center; justify-content: center; min-height: calc(var(--cw-trk) * 1.5 + 30px); }
+.open { display: grid; justify-items: center; gap: 2px; transform: rotate(-3deg); }
+.open figcaption { font-size: 10px; }
 .open.anim { animation: drop .5s var(--ease); }
 .open figcaption, .played-card figcaption { font-size: 11px; color: var(--on-felt-2); font-weight: 600; }
 .trick { display: flex; gap: clamp(4px, 1.6vw, 14px); flex-wrap: wrap; justify-content: center; }
@@ -318,7 +323,7 @@ button { cursor: pointer; }
   .center { grid-template-columns: 1fr auto 1fr; grid-template-rows: 1fr; align-items: center; }
   .center .info { display: contents; }
   .center .pots { grid-column: 3; grid-row: 1; justify-self: end; }
-  .felt-mid { grid-column: 2; grid-row: 1; min-height: calc(var(--cw-md) * 1.5 + 40px); }
+  .felt-mid { grid-column: 2; grid-row: 1; min-height: calc(var(--cw-trk) * 1.5 + 40px); }
 }
 
 /* ───────── Dialoge ───────── */
