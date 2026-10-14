@@ -101,11 +101,13 @@ export class Hacken {
     const lead = this.trick[0].c.s;
     const follow = h.filter((c) => c.s === lead);
     if (follow.length) return follow;
-    // Farbe nicht vorhanden: Trumpf legen; liegt schon Trumpf, muss er höher sein.
-    // Wer keinen (höheren) Trumpf hat, darf frei legen.
+    // Farbe nicht vorhanden: Trumpf legen; liegt schon Trumpf, muss er höher sein, wenn möglich –
+    // sonst darf man untertrumpfen. Nur wer gar keinen Trumpf hat, darf frei legen.
+    const trumps = h.filter((c) => c.s === this.trump);
+    if (!trumps.length) return h.slice();
     const high = Math.max(-1, ...this.trick.filter((t) => t.c.s === this.trump).map((t) => t.c.r));
-    const over = h.filter((c) => c.s === this.trump && c.r > high);
-    return over.length ? over : h.slice();
+    const over = trumps.filter((c) => c.r > high);
+    return over.length ? over : trumps;
   }
   trickWinner() {
     const lead = this.trick[0].c.s;

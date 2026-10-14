@@ -251,7 +251,7 @@ async function openSheet(kind) {
     showSheet('settings', sheetHead('Einstellungen') + `<form class="sheet-body form">
       ${mode === 'solo' ? `<label>Dein Name<input name="name" maxlength="14" value="${esc(s.name)}"></label>` : ''}
       ${mode !== 'client' ? `<label>Tempo der Computer-Gegner<select name="speed">${opt('slow', s.speed, 'Gemütlich')}${opt('normal', s.speed, 'Normal')}${opt('fast', s.speed, 'Schnell')}</select></label>` : ''}
-      <label>Kartenset<select name="deck">${opt('agm', s.deck, 'AGMüller-Bilder, Zahlen von Elsi Jegen')}${opt('jegen', s.deck, 'Elsi Jegen (Frauezogg)')}</select></label>
+      <label>Kartenset<select name="deck">${opt('agm', s.deck, 'AGMüller (Schaffhauser)')}${opt('jegen', s.deck, 'Elsi Jegen (Frauezogg)')}</select></label>
       ${soloPart}
       <div class="form-actions">
         ${mode === 'solo' ? '' : '<button type="button" class="btn danger" data-save="leave">Spiel verlassen</button>'}
