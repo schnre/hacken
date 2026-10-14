@@ -14,7 +14,7 @@ export const DEFAULTS = {
   name: 'Du',
   bots: 3,          // Computer-Gegner im Einzelspiel (2–5 → 3–6 Spieler)
   startChips: 100,
-  ante: 1,          // Grundeinsatz pro Spieler und Runde
+  ante: 1,          // Grundeinsatz pro Spieler – nur wenn Pot und Nebenpot leer sind (Obli-Runde)
   potMax: 20,       // Pot-Obergrenze, Rest geht in den Nebenpot
   speed: 'normal',
   deck: 'agm',
@@ -101,11 +101,11 @@ export class Hacken {
     const lead = this.trick[0].c.s;
     const follow = h.filter((c) => c.s === lead);
     if (follow.length) return follow;
-    const trumps = h.filter((c) => c.s === this.trump);
-    if (!trumps.length) return h.slice();
+    // Farbe nicht vorhanden: Trumpf legen; liegt schon Trumpf, muss er höher sein.
+    // Wer keinen (höheren) Trumpf hat, darf frei legen.
     const high = Math.max(-1, ...this.trick.filter((t) => t.c.s === this.trump).map((t) => t.c.r));
-    const over = trumps.filter((c) => c.r > high);
-    return over.length ? over : trumps;
+    const over = h.filter((c) => c.s === this.trump && c.r > high);
+    return over.length ? over : h.slice();
   }
   trickWinner() {
     const lead = this.trick[0].c.s;
@@ -208,8 +208,11 @@ export class Hacken {
     this.roundNo++;
     this.dealer = (this.dealer + 1) % this.n;
     const D = this.dealer, order = this.seatsFrom(D), dealOrder = this.seatsFrom(D + 1);
-    for (const p of this.players) p.chips = round2(p.chips - this.cfg.ante);
-    this.addPot(this.cfg.ante * this.n);
+    // Einsatz nur, wenn Pot und Nebenpot leer sind – sonst spielt man um die Strafzahlungen im Pot
+    if (obli) {
+      for (const p of this.players) p.chips = round2(p.chips - this.cfg.ante);
+      this.addPot(this.cfg.ante * this.n);
+    }
 
     // Geben: je 2 Karten, Trumpf aufdecken, nochmals je 2 Karten
     this.phase = 'deal';
