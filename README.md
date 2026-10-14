@@ -87,7 +87,7 @@ Nach Änderungen an Dateien in `web/` in `sw.js` die `VERSION` erhöhen, damit i
 4. **Kaufen:** Sonst entscheidet jeder der Reihe nach, ob er kauft. Passen alle, wird eine neue Trumpfkarte aufgedeckt. Nach dreimal «alle passen» wird neu gegeben.
 5. **Mitgehen:** Alle anderen werden gefragt: mitgehen, passen oder «Letzter» (geht nur mit, wenn danach niemand mehr mitgeht; nur einmal und nur, solange noch niemand mitgegangen ist). Geht niemand mit, muss der Letzte mitgehen.
 6. **Tauschen:** Zuerst der Käufer, dann die Mitgeher, je 0 bis 4 Karten. Wer 5 Karten hat, legt danach eine weg. **Stall:** Wer alle 4 tauscht, bekommt 5 und legt eine weg (nur, wenn nicht alle mitspielen und genug Karten da sind).
-7. **Stiche:** Der Käufer spielt aus. Farbe angeben; wer nicht kann, muss trumpfen; liegt schon Trumpf, muss er höher sein, sonst darf man untertrumpfen. Nur wer keinen Trumpf hat, legt frei.
+7. **Stiche:** Der Käufer spielt aus. Farbe angeben (wird Trumpf ausgespielt, muss man höher trumpfen, wenn man kann); wer nicht kann, muss trumpfen; liegt schon Trumpf, muss er höher sein, sonst darf man untertrumpfen. Nur wer keinen Trumpf hat, legt frei.
 8. **Abrechnung:** Soll Käufer 2 Stiche, Mitgeher 1 Stich. Den Pot teilen alle, die ihr Soll erfüllen; der Käufer bekommt doppelt so viel wie ein Mitgeher (Pot 20: 13/7 oder 10/5/5). Wer sein Soll verfehlt, bekommt nichts und zahlt den Pot (Käufer doppelt). Danach wird der Pot aus dem Nebenpot auf 20 aufgefüllt.
 
 Die ausführlichen Regeln stehen in [`web/regeln.html`](web/regeln.html).
