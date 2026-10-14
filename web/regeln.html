@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <meta name="description" content="Spielregeln für Hacken mit Schweizer Jasskarten.">
+  <meta name="theme-color" content="#f7f0de">
+  <title>Hacken – Spielregeln</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Figtree:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="rules-page">
+  <div class="page">
+    <a class="back-link" href="./">← Zum Spiel</a>
+    <header class="page-head">
+      <img src="icon.svg" alt="" width="48" height="48">
+      <h1>Hacken<br><small style="font-size:.5em;font-weight:600">Spielregeln</small></h1>
+    </header>
+
+    <main class="rules">
+      <h2>Worum geht es?</h2>
+      <p>Hacken (auch <em>Chratzen</em>) ist ein Schweizer Kartenspiel mit Jasskarten für 3 bis 6 Personen. In der Mitte liegt ein Pot. Wer kauft oder mitgeht, versucht Stiche zu machen, denn jeder Stich bringt einen Teil des Pots. Wer sein Soll nicht schafft, zahlt dafür kräftig in den Pot.</p>
+
+      <h2>Die Karten</h2>
+      <p>Gespielt wird mit den 36 Deutschschweizer Jasskarten in vier Farben:</p>
+      <div class="suit-row">
+        <figure><img src="cards/agm/sym0.webp" alt=""><figcaption>Eichel</figcaption></figure>
+        <figure><img src="cards/agm/sym1.webp" alt=""><figcaption>Rose</figcaption></figure>
+        <figure><img src="cards/agm/sym2.webp" alt=""><figcaption>Schilte</figcaption></figure>
+        <figure><img src="cards/agm/sym3.webp" alt=""><figcaption>Schelle</figcaption></figure>
+      </div>
+      <p>Die Rangfolge ist in jeder Farbe gleich, von hoch nach tief:</p>
+      <div class="rank-row">
+        <figure><img src="cards/agm/18.webp" alt="Rose-Ass">Ass</figure>
+        <figure><img src="cards/agm/17.webp" alt="Rose-König">König</figure>
+        <figure><img src="cards/agm/16.webp" alt="Rose-Ober">Ober</figure>
+        <figure><img src="cards/agm/15.webp" alt="Rose-Under">Under</figure>
+        <figure><img src="cards/agm/14.webp" alt="Rose-Banner">Banner</figure>
+        <figure><img src="cards/agm/13.webp" alt="Rose-9">9</figure>
+        <figure><img src="cards/agm/12.webp" alt="Rose-8">8</figure>
+        <figure><img src="cards/agm/11.webp" alt="Rose-7">7</figure>
+        <figure><img src="cards/agm/10.webp" alt="Rose-6">6</figure>
+      </div>
+      <p>Jede Karte der Trumpffarbe schlägt jede Karte einer anderen Farbe.</p>
+
+      <h2>Ablauf einer Runde</h2>
+
+      <h3>1. Einsatz</h3>
+      <p>Alle zahlen den Grundeinsatz (z.&nbsp;B. 1 Punkt) in den Pot. Der Pot fasst höchstens 20 Punkte, alles darüber kommt in den <strong>Nebenpot</strong>.</p>
+
+      <h3>2. Geben</h3>
+      <p>Die Person, die an der Reihe ist, mischt und gibt jedem zuerst <strong>2 Karten</strong> verdeckt. Dann wird die nächste Karte offen hingelegt, ihre Farbe ist <strong>Trumpf</strong>. Danach bekommt jeder nochmals 2 Karten. Nach jeder Runde gibt die nächste Person.</p>
+
+      <div class="note">
+        <strong>Obli-Runde:</strong> Die erste Runde und jede Runde, in der Pot und Nebenpot leer sind, ist eine Obli-Runde. Dann <strong>müssen alle mitspielen</strong>. Der Geber bekommt automatisch die aufgedeckte Karte (wie beim Klopfen) und gilt als Käufer, alle anderen sind Mitgeher. Klopfen, Kaufen und Mitgehen fallen weg, es geht direkt mit dem Tauschen weiter.
+      </div>
+
+      <h3>3. Klopfen</h3>
+      <p>Wer zuerst dran ist (der Geber), darf <strong>klopfen</strong>, aber nur, solange er seine Karten noch nicht angeschaut hat. Will er nicht, schaut er seine Karten an, und die nächste Person darf klopfen, solange auch sie ihre Karten noch nicht kennt.</p>
+      <ul>
+        <li>Wer klopft, nimmt die offene Trumpfkarte und hat damit 5 Karten.</li>
+        <li>Wer klopft, <strong>kauft automatisch</strong>. Das Kaufen fällt weg.</li>
+        <li>Geklopft wird meistens nur, wenn ein Ass oder ein König offen liegt.</li>
+      </ul>
+
+      <h3>4. Kaufen</h3>
+      <p>Hat niemand geklopft, entscheidet jeder der Reihe nach (beginnend beim Geber): <strong>kaufen</strong> oder <strong>passen</strong>. Sobald jemand kauft, ist diese Runde des Kaufens vorbei. Der Käufer bekommt die offene Karte <em>nicht</em>.</p>
+      <div class="note">
+        <strong>Alle passen?</strong> Dann wird die nächste Karte aufgedeckt, sie bestimmt den neuen Trumpf, und es wird erneut gefragt. Passen dreimal alle, mischt die nächste Person neu und gibt neu aus.
+      </div>
+
+      <h3>5. Mitgehen</h3>
+      <p>Wenn jemand gekauft hat, werden <strong>alle anderen</strong> der Reihe nach gefragt, auch wer vorher gepasst hat. Jeder sagt <strong>mitgehen</strong>, <strong>passen</strong> oder <strong>«Letzter»</strong>.</p>
+      <ul>
+        <li><strong>«Letzter»</strong> heisst: Ich gehe mit, aber nur, wenn nach mir niemand mehr mitgeht. Geht danach noch jemand mit, ist man draussen.</li>
+        <li>«Letzter» darf nur <strong>eine Person</strong> sagen, und nur solange <strong>noch niemand mitgegangen</strong> ist.</li>
+        <li>Es muss immer mindestens jemand mitgehen: Hat niemand zugesagt und niemand «Letzter» gesagt, <strong>muss der Letzte</strong> in der Reihe mitgehen.</li>
+      </ul>
+
+      <h3>6. Tauschen</h3>
+      <p>Erst wenn feststeht, wer mitspielt, wird getauscht:</p>
+      <ol>
+        <li>Zuerst der <strong>Käufer</strong>, danach die Mitgeher in der Reihenfolge.</li>
+        <li>Jeder darf 0 bis 4 Karten weglegen und gleich viele vom Stapel ziehen.</li>
+        <li>Wer geklopft hat (oder in der Obli-Runde gibt), hält 5 Karten: Er wählt frei, welche er tauscht, und legt <strong>danach</strong> die überschüssige fünfte Karte weg.</li>
+        <li><strong>Stall:</strong> Wer alle 4 Handkarten tauscht, bekommt <strong>5 neue Karten</strong> und legt eine davon weg. Das geht nur, solange nicht alle mitspielen und noch mindestens 5 Karten im Stapel liegen.</li>
+      </ol>
+
+      <h3>7. Stiche spielen</h3>
+      <p>Es werden 4 Stiche gespielt. Der <strong>Käufer spielt aus</strong>, danach spielt jeweils aus, wer den letzten Stich gemacht hat.</p>
+      <ol>
+        <li><strong>Farbe angeben:</strong> Wer die ausgespielte Farbe hat, muss sie legen.</li>
+        <li><strong>Trumpfen:</strong> Wer die Farbe nicht hat, muss einen Trumpf legen.</li>
+        <li><strong>Übertrumpfen:</strong> Liegt bereits ein Trumpf, muss man höher trumpfen, wenn man kann. Kann man nicht, darf man untertrumpfen.</li>
+        <li>Nur wer weder die Farbe noch einen Trumpf hat, darf eine beliebige Karte legen.</li>
+      </ol>
+      <p>Den Stich gewinnt der höchste Trumpf, sonst die höchste Karte der ausgespielten Farbe.</p>
+
+      <h2>Soll und Abrechnung</h2>
+      <table class="pay">
+        <thead><tr><th>Rolle</th><th>Soll</th><th>Verfehlt</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Käufer</strong></td><td>mindestens 2 Stiche</td><td>bekommt nichts, zahlt den <strong>doppelten</strong> Pot</td></tr>
+          <tr><td><strong>Mitgeher</strong></td><td>mindestens 1 Stich</td><td>bekommt nichts, zahlt den <strong>einfachen</strong> Pot</td></tr>
+          <tr><td>Passe</td><td>–</td><td>spielt nicht mit, zahlt nichts</td></tr>
+        </tbody>
+      </table>
+      <p>Den Pot teilen alle, die ihr Soll erfüllt haben. Der <strong>Käufer bekommt doppelt so viel</strong> wie ein Mitgeher, weil er das grössere Risiko trägt. Gerundet wird auf ganze Punkte, den Rest bekommt der Käufer.</p>
+      <table class="pay">
+        <thead><tr><th>Pot 20, alle schaffen ihr Soll</th><th>Käufer</th><th>je Mitgeher</th></tr></thead>
+        <tbody>
+          <tr><td>Käufer + 1 Mitgeher</td><td>13</td><td>7</td></tr>
+          <tr><td>Käufer + 2 Mitgeher</td><td>10</td><td>5</td></tr>
+          <tr><td>Käufer + 3 Mitgeher</td><td>8</td><td>4</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><strong>Wer sein Soll verfehlt</strong>, bekommt nichts und zahlt nur: der Käufer den doppelten, ein Mitgeher den einfachen Pot. Sein Anteil geht an die anderen.</li>
+        <li>Die Strafzahlungen bilden den neuen Pot. Was über 20 geht, kommt in den Nebenpot.</li>
+        <li>Nach der Abrechnung wird der Pot aus dem Nebenpot wieder auf 20 aufgefüllt, solange dort etwas liegt.</li>
+        <li>Sind danach Pot und Nebenpot leer, ist die nächste Runde eine Obli-Runde.</li>
+      </ul>
+      <div class="note">
+        <strong>Beispiel:</strong> Der Pot hat 20. Vreni kauft, macht aber nur 1 Stich. Sepp und Ueli gehen mit und machen je mindestens einen Stich. Sepp und Ueli bekommen je 10. Vreni zahlt 40: 20 kommen in den Pot, 20 in den Nebenpot.
+      </div>
+
+      <h2>In der App</h2>
+      <ul>
+        <li>Grün umrandete Karten darfst du spielen, alle anderen sind gesperrt. Gold umrandet sind deine Trümpfe.</li>
+        <li>Die bereits gespielten Karten aller Gegner siehst du unter ihrem Namen. Die Punkte am Namen zeigen die Stiche und das Soll.</li>
+        <li><strong>Gegen den Computer:</strong> 2 bis 5 Computer-Gegner. Anzahl, Startguthaben, Grundeinsatz, Pot-Maximum, Tempo und Kartenset stellst du in den Einstellungen ein. Dein Punktestand bleibt in diesem Browser gespeichert.</li>
+        <li><strong>Online spielen:</strong> Eine Person wählt «Online-Spiel erstellen» und bekommt einen 4-stelligen Code. Die anderen öffnen dieselbe Seite und geben den Code bei «Mit Code beitreten» ein, oder sie öffnen den geteilten Link. Freie Plätze kann der Gastgeber mit Computer-Gegnern füllen (3 bis 6 Spieler).</li>
+        <li>Das Gerät des Gastgebers führt das Spiel. Es muss offen bleiben, solange gespielt wird. Verliert jemand die Verbindung, spielt der Computer für ihn weiter, bis er wieder beitritt (gleicher Code, gleiches Gerät und gleicher Browser).</li>
+      </ul>
+    </main>
+  </div>
+</body>
+</html>

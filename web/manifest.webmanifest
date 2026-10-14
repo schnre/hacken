@@ -1,0 +1,20 @@
+{
+  "name": "Hacken",
+  "short_name": "Hacken",
+  "description": "Hacken – Schweizer Kartenspiel mit Jasskarten",
+  "lang": "de-CH",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0a2418",
+  "theme_color": "#123d29",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "shortcuts": [
+    { "name": "Spielregeln", "url": "./regeln.html" }
+  ]
+}
