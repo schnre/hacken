@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # hacken
 =======
+=======
+>>>>>>> 4f67187 (Initial Commit with Hacken Web-App)
 # Hacken 🃏
 
 **Hacken** (auch *Chratzen*) ist ein Schweizer Kartenspiel mit Jasskarten. Hier läuft es als Web-App im Browser und auf dem Handy, installierbar als App. Du spielst gegen 2 bis 5 Computer-Gegner oder **online mit Freunden über einen 4-stelligen Code**.
@@ -94,4 +97,7 @@ Nach Änderungen an Dateien in `web/` in `sw.js` die `VERSION` erhöhen, damit i
 8. **Abrechnung:** Soll Käufer 2 Stiche, Mitgeher 1 Stich. Den Pot teilen alle, die ihr Soll erfüllen; der Käufer bekommt doppelt so viel wie ein Mitgeher (Pot 20: 13/7 oder 10/5/5). Wer sein Soll verfehlt, bekommt nichts und zahlt den Pot (Käufer doppelt). Danach wird der Pot aus dem Nebenpot auf 20 aufgefüllt.
 
 Die ausführlichen Regeln stehen in [`web/regeln.html`](web/regeln.html).
+<<<<<<< HEAD
+>>>>>>> 4f67187 (Initial Commit with Hacken Web-App)
+=======
 >>>>>>> 4f67187 (Initial Commit with Hacken Web-App)
