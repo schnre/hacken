@@ -49,10 +49,16 @@ function refresh() {
 
 // ───────── Bilder ─────────
 const cardSrc = (c) => `cards/${settings.deck}/${c.s}${c.r}.webp`;
-const cardImg = (c, cls = '') => `<img class="card ${cls}" src="${cardSrc(c)}" alt="${cardName(c)}" draggable="false">`;
+const cardImg = (c, cls = '') => `<img class="card ${cls}" src="${cardSrc(c)}" alt="${cardName(c)}" decoding="sync" draggable="false">`;
 const back = (cls = '') => `<span class="card back ${cls}" aria-hidden="true"></span>`;
-const symImg = (s) => `<img class="sym" src="cards/${settings.deck}/sym${s}.webp" alt="">`;
-function preload() { for (let s = 0; s < 4; s++) for (let r = 0; r < 9; r++) { const im = new Image(); im.src = cardSrc({ s, r }); } }
+const symImg = (s) => `<img class="sym" src="cards/${settings.deck}/sym${s}.webp" alt="" decoding="sync">`;
+// Vorgeladene Bilder festhalten, damit der Browser sie dekodiert im Speicher behält und neu gezeichnete Karten nicht flackern.
+let preloaded = [];
+function preload() {
+  const srcs = [];
+  for (let s = 0; s < 4; s++) { srcs.push(`cards/${settings.deck}/sym${s}.webp`); for (let r = 0; r < 9; r++) srcs.push(cardSrc({ s, r })); }
+  preloaded = srcs.map((src) => { const im = new Image(); im.src = src; im.decode?.().catch(() => {}); return im; });
+}
 
 const ROLE_CLASS = { 'Käufer': 'buyer', 'Mitgeher': 'joiner', 'Passe': 'passed', 'Letzter': 'last' };
 const PHASES = [['knock', 'Klopfen'], ['buy', 'Kaufen'], ['join', 'Mitgehen'], ['exchange', 'Tauschen'], ['play', 'Stiche'], ['end', 'Abrechnung']];
