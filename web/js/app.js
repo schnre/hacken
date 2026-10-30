@@ -108,8 +108,7 @@ function render() {
       <header><span class="avatar" data-i="${(i % 5) + 1}">${esc(p.name[0])}</span>
         <span class="who"><span class="nm"><b>${esc(p.name)}</b>${v.dealer === i ? '<span class="dealer" title="Geber">G</span>' : ''}</span><small>${fmt(p.chips)} Pkt.</small></span></header>
       <div class="seat-row">${roleBadge(p)}${trickDots(p)}${tag}</div>
-      <div class="mini-hand">${p.knocked ? `<span class="knocked" title="Geklopft: ${cardName(p.knocked)} – für alle sichtbar">${cardImg(p.knocked, 'kn')}</span>` : ''}${Array.from({ length: p.handCount - (p.knocked ? 1 : 0) }, () => back('xs')).join('')}</div>
-      <div class="played" aria-label="Gespielte Karten">${p.played.map((c) => cardImg(c, 'xs')).join('')}</div>
+      ${p.knocked ? `<div class="mini-hand"><span class="knocked" title="Geklopft: ${cardName(p.knocked)} – für alle sichtbar">${cardImg(p.knocked, 'kn')}</span></div>` : ''}
     </article>`;
   }).join('');
 
@@ -197,16 +196,24 @@ function render() {
 }
 
 // ───────── Bildschirm anpassen ─────────
-// Gerät und Ausrichtung erkennen und die Kartengrösse (--k) so wählen, dass der ganze Tisch ohne Scrollen sichtbar ist.
+// Gerät und Ausrichtung erkennen und die Kartengrössen so wählen, dass der ganze Tisch ohne Scrollen sichtbar ist.
+// Eine Stufe t (0…3) steuert beide Skalierungen: Von oben her wird zuerst alles gemeinsam bis zur Grundgrösse
+// verkleinert (t 3→2), dann nur die Nebensachen wie Gegnerkarten (--k, t 2→1), erst zuletzt Hand, Stich und Trumpf (--kp, t 1→0).
 const html = document.documentElement;
 const MAX_SCALE = { phone: 1.15, tablet: 1.35, desktop: 1.5 };
-let scale = 1, fitRound = -1;
+let scale = 3, fitRound = -1;
+function scalesAt(t, max) {
+  if (t >= 2) { const k = 1 + (t - 2) * (max - 1); return [k, k]; }
+  if (t >= 1) return [0.5 + (t - 1) * 0.5, 1];
+  return [0.5, 0.5 + t * 0.5];
+}
 function detectDevice() {
   const w = innerWidth, h = innerHeight;
   const coarse = matchMedia('(pointer: coarse)').matches;
   html.dataset.device = !coarse ? 'desktop' : Math.min(w, h) < 600 ? 'phone' : 'tablet';
   html.dataset.orient = w > h ? 'landscape' : 'portrait';
-  html.toggleAttribute('data-short', w > h && h < 700);   // Handy quer, Laptop-Fenster: Bedienleiste neben die Hand
+  html.toggleAttribute('data-short', w > h && (h < 700 || (w / h >= 1.45 && h < 800))); // Handy quer, Laptop: Bedienleiste neben die Hand
+  html.toggleAttribute('data-tight', h >= w && h < 760); // kleines Handy hoch: Leisten und Abstände enger
   html.toggleAttribute('data-wide', w >= 900 || (w > h && w >= 640)); // Trumpf, Stich und Pot nebeneinander
 }
 function fits() {
@@ -217,9 +224,10 @@ function fits() {
 }
 function fit(full) {
   if ($('table').hidden) return;
-  const set = (k) => html.style.setProperty('--k', k.toFixed(3));
+  const max = MAX_SCALE[html.dataset.device] || 1;
+  const set = (t) => { const [k, kp] = scalesAt(t, max); html.style.setProperty('--k', k.toFixed(3)); html.style.setProperty('--kp', kp.toFixed(3)); };
   if (!full && fits()) return;
-  let lo = 0.45, hi = full ? MAX_SCALE[html.dataset.device] || 1 : scale;
+  let lo = 0, hi = full ? 3 : scale;
   set(hi);
   if (fits()) { scale = hi; return; }
   for (let k = 0; k < 8; k++) { const mid = (lo + hi) / 2; set(mid); if (fits()) lo = mid; else hi = mid; }
