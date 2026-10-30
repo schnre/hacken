@@ -77,7 +77,9 @@ function promptText(a, v) {
     case 'join': return `${esc(a.data.buyer)} kauft. Gehst du mit?${a.data.canLast ? ' Mit «Letzter» gehst du nur mit, wenn nach dir niemand mehr mitgeht.' : ''}`;
     case 'forced': return 'Niemand ist mitgegangen – du musst mitgehen.';
     case 'exchange': return a.data.max
-      ? `Wähle bis zu ${a.data.max} Karten zum Tauschen.${a.data.stall ? ' Tauschst du alle 4 (Stall), bekommst du 5 und legst eine weg.' : ''}`
+      ? `Wähle bis zu ${a.data.max} Karten zum Tauschen.${!a.data.stall ? ''
+        : a.data.keep >= 0 ? ' Tauschst du alle 4 Karten ausser der geklopften (Stall), bekommst du 5 und legst 2 weg.'
+          : ' Tauschst du alle 4 (Stall), bekommst du 5 und legst eine weg.'}`
       : 'Der Stapel ist leer – kein Tausch möglich.';
     case 'discard': return `Du hast ${v.hand.length} Karten – leg eine weg.`;
     case 'play': return a.data.lead ? 'Du spielst aus.' : 'Du bist dran – grün markierte Karten sind erlaubt.';
@@ -106,7 +108,7 @@ function render() {
       <header><span class="avatar" data-i="${(i % 5) + 1}">${esc(p.name[0])}</span>
         <span class="who"><span class="nm"><b>${esc(p.name)}</b>${v.dealer === i ? '<span class="dealer" title="Geber">G</span>' : ''}</span><small>${fmt(p.chips)} Pkt.</small></span></header>
       <div class="seat-row">${roleBadge(p)}${trickDots(p)}${tag}</div>
-      <div class="mini-hand">${Array.from({ length: p.handCount }, () => back('xs')).join('')}</div>
+      <div class="mini-hand">${p.knocked ? `<span class="knocked" title="Geklopft: ${cardName(p.knocked)} – für alle sichtbar">${cardImg(p.knocked, 'kn')}</span>` : ''}${Array.from({ length: p.handCount - (p.knocked ? 1 : 0) }, () => back('xs')).join('')}</div>
       <div class="played" aria-label="Gespielte Karten">${p.played.map((c) => cardImg(c, 'xs')).join('')}</div>
     </article>`;
   }).join('');
@@ -114,14 +116,19 @@ function render() {
   // Mitte
   const lead = v.trick[0]?.c.s;
   const best = v.trick.length ? v.trick.reduce((a, t) => (score(t.c, lead, v.trump) > score(a.c, lead, v.trump) ? t : a)) : null;
-  const openKey = v.open ? `${v.open.s}${v.open.r}` : null;
+  // Nach dem Klopfen bleibt die Trumpfkarte offen sichtbar – mit dem Namen, bei wem sie jetzt ist.
+  const holder = v.open ? -1 : v.players.findIndex((p) => p.knocked);
+  const shown = v.open ?? v.players[holder]?.knocked;
+  const openKey = shown ? `${shown.s}${shown.r}` : null;
   const animOpen = openKey !== lastOpen; lastOpen = openKey;
   const trickKey = `${v.roundNo}:${v.players.reduce((a, p) => a + p.played.length, 0) - v.trick.length}`;
   const animFrom = trickKey === lastTrickKey ? lastTrickLen : 0;
   lastTrickKey = trickKey; lastTrickLen = v.trick.length;
 
   const trumpBox = v.trump == null ? '' : `<div class="trump">${symImg(v.trump)}<div><small>Trumpf</small><b>${SUITS[v.trump]}</b></div></div>`;
-  const openCard = v.open ? `<figure class="open ${animOpen ? 'anim' : ''}" title="${cardName(v.open)}">${cardImg(v.open, 'side')}<figcaption>${['exchange', 'play', 'end'].includes(v.phase) ? 'Trumpfkarte' : 'Aufgedeckt'}</figcaption></figure>` : '';
+  const caption = v.open ? (['exchange', 'play', 'end'].includes(v.phase) ? 'Trumpfkarte' : 'Aufgedeckt')
+    : `bei ${holder === v.seat ? 'dir' : esc(v.players[holder]?.name)}`;
+  const openCard = shown ? `<figure class="open ${animOpen ? 'anim' : ''} ${v.open ? '' : 'taken'}" title="${cardName(shown)}">${cardImg(shown, 'side')}<figcaption>${caption}</figcaption></figure>` : '';
   const trick = v.trick.map((t, k) => `<figure class="played-card ${t === best ? 'best' : ''} ${k >= animFrom ? 'anim' : ''}">${cardImg(t.c, 'trk')}<figcaption>${esc(v.players[t.p].name)}</figcaption></figure>`).join('');
   $('center').innerHTML = `
     <div class="info">
@@ -154,6 +161,7 @@ function render() {
       if (picking) { cls.push('pick'); if (sel.includes(i)) cls.push('sel', ask.kind === 'discard' ? 'drop' : 'swap'); }
       if (legal) cls.push(isLegal(c) ? 'ok' : 'no');
       if (c.s === v.trump) cls.push('is-trump');
+      if (me.knocked && sameCard(c, me.knocked)) cls.push('is-knocked');
       return `<button class="hand-card ${cls.join(' ')}" data-card="${i}" ${legal && !isLegal(c) ? 'disabled' : ''} aria-label="${cardName(c)}">${cardImg(c)}</button>`;
     }).join('');
 
@@ -166,7 +174,7 @@ function render() {
       case 'join': a = btn('join', 'Mitgehen', 'primary') + (ask.data.canLast ? btn('last', 'Letzter', '', 'Mitgehen nur, wenn nach dir niemand mehr mitgeht') : '') + btn('pass', 'Passen'); break;
       case 'forced': a = btn('ok', 'Mitgehen (Pflicht)', 'primary'); break;
       case 'exchange': {
-        const stall = ask.data.stall && sel.length === 4;
+        const stall = ask.data.stall && sel.length === 4 && !sel.includes(ask.data.keep ?? -1);
         a = btn('swap', stall ? 'Stall nehmen (5 neue Karten)' : sel.length ? `${sel.length} ${sel.length === 1 ? 'Karte' : 'Karten'} tauschen` : 'Nichts tauschen', 'primary');
         break;
       }
@@ -182,7 +190,52 @@ function render() {
     openSummary(v.summary);
   }
   if (mode === 'client' && v.phase === 'deal' && sheet.open && sheet.dataset.kind === 'summary') sheet.close();
+
+  // Neue Runde: Grösse neu bestimmen, sonst nur verkleinern, falls etwas nicht mehr Platz hat (kein Springen während der Runde).
+  fit(v.roundNo !== fitRound);
+  fitRound = v.roundNo;
 }
+
+// ───────── Bildschirm anpassen ─────────
+// Gerät und Ausrichtung erkennen und die Kartengrösse (--k) so wählen, dass der ganze Tisch ohne Scrollen sichtbar ist.
+const html = document.documentElement;
+const MAX_SCALE = { phone: 1.15, tablet: 1.35, desktop: 1.5 };
+let scale = 1, fitRound = -1;
+function detectDevice() {
+  const w = innerWidth, h = innerHeight;
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  html.dataset.device = !coarse ? 'desktop' : Math.min(w, h) < 600 ? 'phone' : 'tablet';
+  html.dataset.orient = w > h ? 'landscape' : 'portrait';
+  html.toggleAttribute('data-short', w > h && h < 700);   // Handy quer, Laptop-Fenster: Bedienleiste neben die Hand
+  html.toggleAttribute('data-wide', w >= 900 || (w > h && w >= 640)); // Trumpf, Stich und Pot nebeneinander
+}
+function fits() {
+  html.classList.add('measuring');
+  const ok = html.scrollHeight <= html.clientHeight + 1 && html.scrollWidth <= html.clientWidth + 1;
+  html.classList.remove('measuring');
+  return ok;
+}
+function fit(full) {
+  if ($('table').hidden) return;
+  const set = (k) => html.style.setProperty('--k', k.toFixed(3));
+  if (!full && fits()) return;
+  let lo = 0.45, hi = full ? MAX_SCALE[html.dataset.device] || 1 : scale;
+  set(hi);
+  if (fits()) { scale = hi; return; }
+  for (let k = 0; k < 8; k++) { const mid = (lo + hi) / 2; set(mid); if (fits()) lo = mid; else hi = mid; }
+  scale = lo; set(lo);
+}
+let fitQueued = false;
+function refit() {
+  if (fitQueued) return;
+  fitQueued = true;
+  requestAnimationFrame(() => { fitQueued = false; detectDevice(); fit(true); });
+}
+detectDevice();
+addEventListener('resize', refit);
+addEventListener('orientationchange', refit);
+window.visualViewport?.addEventListener('resize', refit);
+document.fonts?.ready.then(refit);
 function btn(action, label, kind = '', title = '', disabled = false) {
   return `<button class="btn ${kind}" data-answer="${action}" ${title ? `title="${title}"` : ''} ${disabled ? 'disabled' : ''}>${label}</button>`;
 }
@@ -296,7 +349,7 @@ function readNumbers(f) {
 const cleanName = (x) => (String(x || '').trim().replace(/\s+/g, ' ').slice(0, 14) || 'Gast');
 
 // ───────── Bildschirme ─────────
-function showTable() { $('menu').hidden = true; $('table').hidden = false; document.body.classList.remove('in-menu'); }
+function showTable() { $('menu').hidden = true; $('table').hidden = false; document.body.classList.remove('in-menu'); fitRound = -1; }
 function showMenu(html) { $('table').hidden = true; $('menu').hidden = false; $('menu').innerHTML = html; document.body.classList.add('in-menu'); }
 
 function menuHome(error = '') {
