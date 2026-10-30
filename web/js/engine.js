@@ -47,7 +47,7 @@ export class Hacken {
     this.players = seats.map((s, i) => ({
       name: s.name, bot: !!s.bot, offline: false,
       chips: saved?.chips?.[i] ?? this.cfg.startChips,
-      hand: [], role: '', won: 0, played: [], looked: false,
+      hand: [], role: '', won: 0, played: [], looked: false, knocked: null,
     }));
     this.n = this.players.length;
     this.dealer = saved?.dealer ?? this.n - 1;
@@ -62,7 +62,7 @@ export class Hacken {
     this.deck = []; this.open = null; this.trump = null; this.trick = []; this.lastTrick = null;
     this.buyer = -1; this.active = []; this.phase = 'idle'; this.msg = ''; this.turn = -1; this.summary = null;
     this.reveals = 0; this.obli = false;
-    for (const p of this.players) Object.assign(p, { hand: [], role: '', won: 0, played: [], looked: false });
+    for (const p of this.players) Object.assign(p, { hand: [], role: '', won: 0, played: [], looked: false, knocked: null });
   }
 
   snapshot() {
@@ -78,7 +78,7 @@ export class Hacken {
       open: this.open, trump: this.trump, trick: this.trick, roundNo: this.roundNo, obli: this.obli,
       players: this.players.map((p) => ({
         name: p.name, chips: p.chips, role: p.role, won: p.won, played: p.played,
-        handCount: p.hand.length, bot: p.bot, offline: p.offline,
+        handCount: p.hand.length, bot: p.bot, offline: p.offline, knocked: this.knockedCard(p),
       })),
       hand: me.hand, looked: me.looked,
       summary: this.summary, log: this.log.slice(0, 80),
@@ -93,7 +93,15 @@ export class Hacken {
     if (this.pot > this.cfg.potMax) { this.side = round2(this.side + this.pot - this.cfg.potMax); this.pot = this.cfg.potMax; }
   }
   delay(f = 1) { const ms = { slow: 1300, normal: 800, fast: 380 }[this.cfg.speed] ?? 800; return this.ui.wait(ms * f); }
-  canStall(i) { return this.active.length < this.n && this.deck.length >= 5 && this.players[i].hand.length === 4; }
+  /** Die geklopfte Trumpfkarte bleibt für alle sichtbar, solange sie in der Hand ist. */
+  knockedCard(p) { return p.knocked && p.hand.some((c) => sameCard(c, p.knocked)) ? p.knocked : null; }
+  knockedIdx(i) { const p = this.players[i]; return p.knocked ? p.hand.findIndex((c) => sameCard(c, p.knocked)) : -1; }
+  // Stall: alle 4 Handkarten tauschen – wer geklopft hat, behält dabei die geklopfte Karte.
+  canStall(i) {
+    const h = this.players[i].hand.length - (this.knockedIdx(i) >= 0 ? 1 : 0);
+    return this.active.length < this.n && this.deck.length >= 5 && h === 4;
+  }
+  isStall(i, idx) { return idx.length === 4 && !idx.includes(this.knockedIdx(i)) && this.canStall(i); }
 
   legal(i) {
     const h = this.players[i].hand;
@@ -238,7 +246,7 @@ export class Hacken {
       // Der Geber bekommt die aufgedeckte Karte und kauft, alle anderen müssen mitgehen.
       for (const p of this.players) p.looked = true;
       const d = this.players[D];
-      d.hand.push(this.open); this.open = null; d.role = 'Käufer'; this.buyer = D;
+      d.hand.push(this.open); d.knocked = this.open; this.open = null; d.role = 'Käufer'; this.buyer = D;
       for (const i of order.slice(1)) this.players[i].role = 'Mitgeher';
       this.active = order.slice();
       this.say(`Obli-Runde: ${d.name} bekommt die Trumpfkarte und kauft, alle gehen mit.`);
@@ -251,7 +259,7 @@ export class Hacken {
         const a = await this.decide(i, 'knock');
         p.looked = true;
         if (a === 'knock') {
-          p.hand.push(this.open); this.open = null;
+          p.hand.push(this.open); p.knocked = this.open; this.open = null;
           p.role = 'Käufer'; this.buyer = i;
           this.say(`${p.name} klopft, nimmt die Trumpfkarte und kauft.`);
           await this.delay();
@@ -316,14 +324,15 @@ export class Hacken {
       this.active = [this.buyer, ...others.filter((i) => this.players[i].role === 'Mitgeher')];
     }
 
-    // 4) Tauschen – zuerst der Käufer, dann die Mitgeher. Stall: alle 4 tauschen → 5 bekommen, 1 weglegen.
+    // 4) Tauschen – zuerst der Käufer, dann die Mitgeher. Stall: alle 4 tauschen → 5 bekommen, auf 4 Karten weglegen.
+    //    Wer geklopft hat, tauscht beim Stall die 4 übrigen Karten und behält die geklopfte.
     this.phase = 'exchange';
     for (const i of this.active) {
       const p = this.players[i];
       const max = Math.min(4, this.deck.length);
       const stall = this.canStall(i);
-      const idx = await this.decide(i, 'exchange', { max, stall });
-      const isStall = stall && idx.length === 4;
+      const idx = await this.decide(i, 'exchange', { max, stall, keep: this.knockedIdx(i) });
+      const isStall = this.isStall(i, idx);
       const keep = p.hand.filter((_, k) => !idx.includes(k));
       p.hand = keep.concat(this.deck.splice(0, isStall ? 5 : idx.length));
       this.say(`${p.name} ${isStall ? 'nimmt einen Stall (5 neue Karten)' : `tauscht ${idx.length} ${idx.length === 1 ? 'Karte' : 'Karten'}`}.`);
